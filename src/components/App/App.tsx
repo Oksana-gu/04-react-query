@@ -18,9 +18,7 @@ export default function App() {
       setMovies([]);
       setError(false);
       setLoading(true);
-
       const data = await fetchMovies({ query });
-
 if (data.length === 0) {
   toast.error("No movies found for your request.");
 }
@@ -32,7 +30,6 @@ setMovies(data);
       setLoading(false);
     }
   };
-
   return (
     <>
       <Toaster />
