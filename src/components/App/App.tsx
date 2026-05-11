@@ -15,22 +15,24 @@ import { type Movie } from "../../types/movie";
 import css from "./App.module.css";
 
 export default function App() {
+  
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-
+  
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError } = useQuery(
-    {
-    queryKey: ["movies", query, page],
-    queryFn: () => fetchMovies({ query, page }),
-    enabled: query !== "",
-    placeholderData: (previousData) => previousData,
-  });useEffect(() => {
-    if (data && data.results.length === 0) {
-      toast.error("No movies found for your request.");
-    }
-  }, [data]);
+  const { data, isLoading, isError, isFetching, isSuccess } = useQuery({
+  queryKey: ["movies", query, page],
+  queryFn: () => fetchMovies({ query, page }),
+  enabled: query !== "",
+  placeholderData: (previousData) => previousData,
+});
+
+useEffect(() => {
+  if (data && data.results.length === 0) {
+    toast.error("No movies found for your request.");
+  }
+}, [data]);
 
    const handleSearch = (newQuery: string) => {
     setQuery(newQuery);
@@ -42,11 +44,11 @@ export default function App() {
 
       <SearchBar onSubmit={handleSearch} />
 
-      {isLoading && <Loader />}
+      {isLoading || isFetching ? <Loader /> : null}
 
       {isError && <ErrorMessage />}
 
-      {data && data.results.length > 0 && (
+      {isSuccess && data.results.length > 0 && (
         <>
           <MovieGrid
             movies={data.results}
@@ -78,6 +80,7 @@ export default function App() {
     </>
   );
 }
+
 
 
 
